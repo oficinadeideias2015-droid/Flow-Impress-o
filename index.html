@@ -7,10 +7,20 @@
 :root{--p:#155eef;--d:#101828;--m:#667085;--b:#e4e7ec;--bg:#f5f7fb;--ok:#067647;--danger:#b42318}*{box-sizing:border-box}body{margin:0;font:15px/1.45 Arial,sans-serif;color:var(--d);background:var(--bg)}header{background:#101828;color:white;padding:16px 4%;display:flex;align-items:center;justify-content:space-between;gap:16px}header h1{font-size:21px;margin:0}header small{color:#d0d5dd}.wrap{max-width:1250px;margin:auto;padding:18px}.nav{display:flex;gap:8px;overflow:auto;margin-bottom:16px}.nav button{white-space:nowrap}.card{background:white;border:1px solid var(--b);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 2px 6px #1018280a}.page{display:none}.page.active{display:block}h2{margin:0 0 14px;font-size:20px}h3{margin:0 0 10px;font-size:16px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.span2{grid-column:span 2}.span4{grid-column:1/-1}label{display:block;font-weight:600;font-size:13px;margin-bottom:4px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;border:1px solid #d0d5dd;border-radius:8px;padding:10px;background:white}textarea{min-height:72px;resize:vertical}button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700;background:#e9eefb;color:#344054}button.primary{background:var(--p);color:white}button.success{background:var(--ok);color:white}button.danger{color:var(--danger);background:#fee4e2}button.ghost{background:white;border:1px solid var(--b)}.actions{display:flex;gap:8px;flex-wrap:wrap}.tablebox{overflow:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:10px;border-bottom:1px solid var(--b);text-align:left;vertical-align:top}th{font-size:12px;text-transform:uppercase;color:var(--m);background:#f9fafb}.num{text-align:right}.muted{color:var(--m);font-size:13px}.badge{padding:4px 8px;border-radius:20px;background:#eef4ff;color:#3538cd;font-size:12px}.totalbox{margin-left:auto;max-width:360px}.totalbox div{display:flex;justify-content:space-between;padding:7px 0}.totalbox .grand{border-top:2px solid var(--d);font-size:20px;font-weight:bold}.empty{text-align:center;color:var(--m);padding:25px}.logoPreview{max-width:180px;max-height:80px;object-fit:contain;display:none}.notice{background:#fffaeb;border:1px solid #fedf89;color:#93370d;padding:10px;border-radius:8px;margin-bottom:12px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{background:white;border:1px solid var(--b);border-radius:12px;padding:18px}.stat small{display:block;color:var(--m);font-weight:700;margin-bottom:8px}.stat strong{display:block;font-size:24px}.stat.blue{border-left:5px solid var(--p)}.stat.green{border-left:5px solid var(--ok)}.stat.orange{border-left:5px solid #f79009}.stat.red{border-left:5px solid var(--danger)}@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}}@media(max-width:520px){.stats{grid-template-columns:1fr}}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.span4{grid-column:1/-1}}@media(max-width:520px){.grid{grid-template-columns:1fr}.span2,.span4{grid-column:1}.wrap{padding:10px}.card{padding:13px}header{align-items:flex-start;flex-direction:column}}
 @media print{body{background:white}.no-print,header,.nav{display:none!important}.wrap{max-width:none;padding:0}.page{display:none!important}#orcamento{display:block!important}.card{box-shadow:none;border:0;padding:0}.form-area,.item-actions,.remove-col,.quote-editor{display:none!important}#printHead{display:block!important}table{min-width:0;font-size:12px}th,td{padding:7px}.totalbox{break-inside:avoid}.printDescription{white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:normal!important;overflow:visible!important;max-width:none!important;direction:ltr!important;text-align:left!important;unicode-bidi:plaintext!important;line-height:1.45!important}.printTable{table-layout:fixed;width:100%}.printTable th:nth-child(1),.printTable td:nth-child(1){width:55%}.printTable th:nth-child(2),.printTable td:nth-child(2){width:18%}.printTable th:nth-child(3),.printTable td:nth-child(3){width:10%;text-align:center}.printTable th:nth-child(4),.printTable td:nth-child(4){width:17%;text-align:right}}
 #printHead{display:none}.printDoc{font-family:Arial,sans-serif;color:#111;font-size:11px;line-height:1.3}.printTop{display:grid;grid-template-columns:1fr 1fr;color:#777!important;padding-bottom:10px;border-bottom:1.5px solid #111;direction:ltr;font-size:11px}.printTop .printDate{text-align:left;color:#777!important;display:block}.printTop .printNumber{text-align:right;color:#777!important;display:block}.printHeader{display:grid;grid-template-columns:82px 1fr 185px;gap:14px;align-items:start;padding:14px 0;border-bottom:1.5px solid #111}.printLogo{width:82px;height:82px;object-fit:contain}.printCompany h2{font-size:18px;margin:0 0 5px}.printCompany div{margin:2px 0}.printContact{text-align:right}.printContact strong{font-size:14px;display:block;margin-bottom:16px}.printClientRow{display:grid;grid-template-columns:1fr 155px;gap:10px;padding:12px 0;border-bottom:1.5px solid #111}.printClientBox,.printDeadline{border:1px solid #333;padding:10px;min-height:88px}.printClientBox strong{font-size:13px}.printClientDetails{margin-top:23px;text-align:right;color:#666}.printDeadline{text-align:center}.printDeadline strong{display:block;margin-bottom:3px}.printIntro{padding:10px 12px;border-bottom:1.5px solid #111;font-size:10px}.printTable{margin-top:14px;border-top:1.5px solid #111;border-bottom:1.5px solid #111}.printTable th{background:#f2f2f2;color:#111;text-transform:none;font-size:10px;border-bottom:1px solid #111}.printTable td{border-bottom:1px solid #777}.printProduct{font-size:10px;font-weight:bold;text-transform:uppercase}.printDescription{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;color:#555;direction:ltr;text-align:left;unicode-bidi:plaintext;line-height:1.45}.printTotals{margin-top:auto;border-top:1.5px solid #111}.printTotals .row{display:grid;grid-template-columns:1fr 120px;padding:7px 12px;border-bottom:1px solid #777}.printTotals .row span:last-child{text-align:right;font-weight:bold}.printTotals .grand{font-size:13px;border-bottom:1.5px solid #111}.printPayment{padding:14px 20px;color:#555}.printFooter{position:fixed;left:0;right:0;bottom:0;border-bottom:1.5px solid #111;display:flex;justify-content:space-between;padding:0 8px 5px;font-size:9px;background:#fff}.printPage:after{content:'Página ' counter(page, decimal-leading-zero) '/' counter(pages)}.printTable thead{display:table-header-group}.printTable tr{break-inside:avoid;page-break-inside:avoid}.printDoc{padding-bottom:28px}@page{size:A4;margin:10mm}
+
+.auth-pending>header,.auth-pending>.wrap{display:none}
+.loginScreen{display:none;min-height:100vh;align-items:center;justify-content:center;padding:22px;background:linear-gradient(135deg,#101828,#155eef)}
+.auth-pending .loginScreen{display:flex}
+.loginBox{width:100%;max-width:420px;background:#fff;border-radius:18px;padding:30px;box-shadow:0 24px 60px #0005}
+.loginBox h1{margin:0 0 6px;font-size:25px}.loginBox p{color:var(--m);margin:0 0 22px}.loginBox label{margin-top:12px}
+.loginBox button{width:100%;margin-top:18px}.loginError{display:none;margin-top:14px;padding:10px;border-radius:8px;background:#fee4e2;color:var(--danger)}
+.headerUser{display:flex;align-items:center;gap:10px}.headerUser button{padding:7px 11px;background:#fff2;color:#fff;border:1px solid #ffffff55}
+
 </style>
 </head>
-<body>
-<header><div><h1 id="brand">Flow Comunicação Visual</h1><small>Sistema gratuito de orçamentos e ordens de serviço</small></div><div id="saveState">Dados salvos neste aparelho</div></header>
+<body class="auth-pending">
+<div class="loginScreen no-print"><div class="loginBox"><h1>Flow Orçamentos</h1><p>Acesso de funcionários</p><label>E-mail</label><input id="loginEmail" type="email" autocomplete="username" placeholder="seuemail@exemplo.com"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite sua senha"><button class="primary" id="loginButton" onclick="entrarSistema()">Entrar</button><div id="loginError" class="loginError"></div><div class="muted" style="margin-top:16px;text-align:center">Acesso exclusivo da equipe Flow Comunicação Visual</div></div></div>
+<header><div><h1 id="brand">Flow Comunicação Visual</h1><small>Sistema gratuito de orçamentos e ordens de serviço</small></div><div class="headerUser"><span id="loggedUser"></span><span id="saveState">Dados salvos neste aparelho</span><button onclick="sairSistema()">Sair</button></div></header>
 <div class="wrap">
 <nav class="nav no-print">
 <button class="primary" data-page="orcamento">Novo orçamento</button><button data-page="historico">Histórico</button><button data-page="relatorios">Relatórios mensais</button><button data-page="clientes">Clientes</button><button data-page="servicos">Serviços</button><button data-page="empresa">Minha empresa</button><button data-page="backup">Backup</button>
@@ -55,7 +65,11 @@
 
 <section id="backup" class="page"><div class="card"><h2>Backup dos dados</h2><div class="notice">Os dados ficam somente neste navegador. Faça um backup regularmente e guarde o arquivo em local seguro.</div><div class="actions"><button class="primary" onclick="exportBackup()">Baixar backup</button><label style="margin:0"><span style="display:inline-block;padding:10px 14px;background:#e9eefb;border-radius:8px;cursor:pointer">Restaurar backup</span><input type="file" accept=".json" onchange="importBackup(event)" style="display:none"></label></div></div></section>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL='https://gvnztlrcxelivejlaxmm.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_9oMWSPsfFzZGtr0gPClgSg_bZ6iempE';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 var KEY='flow_orc_v1';
 var db=JSON.parse(localStorage.getItem(KEY)||'null')||{company:{nome:'Flow Comunicação Visual',pagamento:'50% de entrada e 50% na entrega',entrega:'7 dias úteis após aprovação',validade:'15 dias'},clients:[],services:[
 {id:'s1',nome:'Lona com impressão',un:'m2',preco:120,desc:'Lona impressa com acabamento em ilhós'},
@@ -105,6 +119,31 @@ function sendWhatsApp(){var cid=document.getElementById('cliente').value,c=db.cl
 function exportBackup(){var b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-flow-orcamentos-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
 function importBackup(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!d.clients||!d.services||!d.quotes)throw 0;if(confirm('Restaurar este backup e substituir os dados atuais?')){db=d;persist();init();alert('Backup restaurado.')}}catch(x){alert('Arquivo de backup inválido.')}};r.readAsText(f)}
 function renderAll(){renderClients();renderServices();renderQuotes();renderReports();loadCompany()}
-function init(){document.getElementById('reportMonth').value=new Date().toISOString().slice(0,7);renderAll();newQuote()}init();
+function init(){document.getElementById('reportMonth').value=new Date().toISOString().slice(0,7);renderAll();newQuote()}
+function mostrarErroLogin(msg){var e=document.getElementById('loginError');e.textContent=msg;e.style.display='block'}
+async function liberarSistema(user){
+  var res=await supabaseClient.from('funcionarios').select('nome,email,perfil,ativo').eq('id',user.id).single();
+  if(res.error||!res.data||!res.data.ativo){await supabaseClient.auth.signOut();mostrarErroLogin('Usuário sem autorização ou desativado.');return}
+  document.getElementById('loggedUser').textContent=(res.data.nome||user.email)+' · '+(res.data.perfil==='administrador'?'Administrador':'Funcionário');
+  document.body.classList.remove('auth-pending');
+  init();
+}
+async function entrarSistema(){
+  var btn=document.getElementById('loginButton'),email=document.getElementById('loginEmail').value.trim(),senha=document.getElementById('loginPassword').value;
+  document.getElementById('loginError').style.display='none';
+  if(!email||!senha){mostrarErroLogin('Informe o e-mail e a senha.');return}
+  btn.disabled=true;btn.textContent='Entrando...';
+  var res=await supabaseClient.auth.signInWithPassword({email:email,password:senha});
+  btn.disabled=false;btn.textContent='Entrar';
+  if(res.error){mostrarErroLogin('E-mail ou senha incorretos.');return}
+  await liberarSistema(res.data.user);
+}
+async function sairSistema(){await supabaseClient.auth.signOut();location.reload()}
+async function iniciarAutenticacao(){
+  var res=await supabaseClient.auth.getSession();
+  if(res.data.session){await liberarSistema(res.data.session.user)}
+}
+document.getElementById('loginPassword').addEventListener('keydown',function(e){if(e.key==='Enter')entrarSistema()});
+iniciarAutenticacao();
 </script>
 </body></html>

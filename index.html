@@ -77,7 +77,46 @@ var db=JSON.parse(localStorage.getItem(KEY)||'null')||{company:{nome:'Flow Comun
 {id:'s3',nome:'Criação de arte',un:'fixo',preco:150,desc:'Criação e finalização de arte'}
 ],quotes:[],seq:1};
 var editQuoteId=null;
-function persist(){localStorage.setItem(KEY,JSON.stringify(db));document.getElementById('saveState').textContent='Salvo às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+var cloudReady=false,cloudSaveTimer=null,usuarioAtualId=null;
+function persist(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+  document.getElementById('saveState').textContent=cloudReady?'Sincronizando...':'Salvo neste aparelho';
+  if(cloudReady){
+    clearTimeout(cloudSaveTimer);
+    cloudSaveTimer=setTimeout(salvarNuvem,500);
+  }
+}
+async function salvarNuvem(){
+  var res=await supabaseClient.from('dados_sistema').upsert({
+    id:'flow',
+    dados:db,
+    atualizado_em:new Date().toISOString(),
+    atualizado_por:usuarioAtualId
+  },{onConflict:'id'});
+  document.getElementById('saveState').textContent=res.error?'Falha na nuvem · salvo localmente':'Nuvem salva às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+async function carregarNuvem(){
+  var res=await supabaseClient.from('dados_sistema').select('dados').eq('id','flow').maybeSingle();
+  if(res.error){
+    document.getElementById('saveState').textContent='Nuvem indisponível · usando dados locais';
+    return false;
+  }
+  if(res.data&&res.data.dados&&Object.keys(res.data.dados).length){
+    db=res.data.dados;
+    localStorage.setItem(KEY,JSON.stringify(db));
+  }else{
+    var envio=await supabaseClient.from('dados_sistema').upsert({
+      id:'flow',dados:db,atualizado_em:new Date().toISOString(),atualizado_por:usuarioAtualId
+    },{onConflict:'id'});
+    if(envio.error){
+      document.getElementById('saveState').textContent='Não foi possível iniciar a nuvem';
+      return false;
+    }
+  }
+  cloudReady=true;
+  document.getElementById('saveState').textContent='Dados sincronizados';
+  return true;
+}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function money(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
@@ -124,7 +163,10 @@ function mostrarErroLogin(msg){var e=document.getElementById('loginError');e.tex
 async function liberarSistema(user){
   var res=await supabaseClient.from('funcionarios').select('nome,email,perfil,ativo').eq('id',user.id).single();
   if(res.error||!res.data||!res.data.ativo){await supabaseClient.auth.signOut();mostrarErroLogin('Usuário sem autorização ou desativado.');return}
+  usuarioAtualId=user.id;
   document.getElementById('loggedUser').textContent=(res.data.nome||user.email)+' · '+(res.data.perfil==='administrador'?'Administrador':'Funcionário');
+  document.getElementById('saveState').textContent='Carregando dados...';
+  await carregarNuvem();
   document.body.classList.remove('auth-pending');
   init();
 }

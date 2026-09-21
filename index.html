@@ -144,10 +144,40 @@ function syncPayment(){var s=document.getElementById('payStatus').value;if(s==='
 function newQuote(){editQuoteId=null;document.getElementById('os').value=nextOS();document.getElementById('data').value=new Date().toISOString().slice(0,10);document.getElementById('status').value='Rascunho';document.getElementById('payStatus').value='Em aberto';document.getElementById('received').value=0;document.getElementById('paymentDate').value='';document.getElementById('obs').value='';document.getElementById('desconto').value=0;document.getElementById('acrescimo').value=0;document.getElementById('pagamento').value=db.company.pagamento||'';document.getElementById('entrega').value=db.company.entrega||'';document.getElementById('validade').value=db.company.validade||'';document.getElementById('itens').innerHTML='';addItem()}
 function collectItems(){return Array.from(document.querySelectorAll('#itens tr')).map(function(r){return{serviceId:r.querySelector('.isrv').value,desc:r.querySelector('.idesc').value,w:Number(r.querySelector('.iw').value)||0,h:Number(r.querySelector('.ih').value)||0,q:Number(r.querySelector('.iq').value)||0,un:r.querySelector('.iun').value,price:Number(r.querySelector('.ip').value)||0,total:Number(r.querySelector('.itotal').textContent.replace(/[^\d,]/g,'').replace(',','.'))||0}})}
 var pendingQuote=null;
-function saveQuote(){var c=document.getElementById('cliente').value;if(!c){alert('Selecione um cliente.');return}var values=calc(),id=editQuoteId||uid(),anterior=db.quotes.find(function(x){return x.id===id})||{},q={id:id,os:document.getElementById('os').value.trim()||nextOS(),date:document.getElementById('data').value,clientId:c,status:document.getElementById('status').value,payStatus:document.getElementById('payStatus').value,received:Number(document.getElementById('received').value)||0,paymentDate:document.getElementById('paymentDate').value,pagamento:document.getElementById('pagamento').value,entrega:document.getElementById('entrega').value,validade:document.getElementById('validade').value,obs:document.getElementById('obs').value,desconto:Number(document.getElementById('desconto').value)||0,acrescimo:Number(document.getElementById('acrescimo').value)||0,items:collectItems(),subtotal:values.sub,total:values.total,nfDecision:anterior.nfDecision||'',nfStatus:anterior.nfStatus||'',nfUpdatedAt:anterior.nfUpdatedAt||''};if(isClosedStatus(q.status)&&!q.nfDecision){pendingQuote=q;document.getElementById('nfModal').classList.add('show');return}finalizarSalvarQuote(q)}
-function finalizarSalvarQuote(q){var i=db.quotes.findIndex(function(x){return x.id===q.id});if(i>=0)db.quotes[i]=q;else{db.quotes.unshift(q);db.seq++}editQuoteId=q.id;persist();renderQuotes();renderNotas();renderReports();alert('Orçamento salvo com sucesso e relatório atualizado.')}
-function escolherNF(decisao){if(!pendingQuote)return;pendingQuote.nfDecision=decisao;pendingQuote.nfStatus=decisao==='emitir_agora'?'Aguardando certificado':decisao==='emitir_depois'?'Pendente':'Não solicitada';pendingQuote.nfUpdatedAt=new Date().toISOString();var q=pendingQuote;pendingQuote=null;document.getElementById('nfModal').classList.remove('show');finalizarSalvarQuote(q);if(decisao==='emitir_agora')alert('A solicitação foi registrada. Para transmitir automaticamente, ainda falta configurar o certificado digital A1 com segurança.')}
-function cancelarEscolhaNF(){pendingQuote=null;document.getElementById('nfModal').classList.remove('show')}
+function saveQuote(){
+  var c=document.getElementById('cliente').value;
+  if(!c){alert('Selecione um cliente.');return}
+  var values=calc(),id=editQuoteId||uid(),anterior=db.quotes.find(function(x){return x.id===id})||{};
+  var situacaoPagamento=document.getElementById('payStatus').value;
+  var valorRecebido=Number(document.getElementById('received').value)||0;
+  if(situacaoPagamento==='Recebido'&&valorRecebido<=0)valorRecebido=values.total;
+  var q={id:id,os:document.getElementById('os').value.trim()||nextOS(),date:document.getElementById('data').value||new Date().toISOString().slice(0,10),clientId:c,status:document.getElementById('status').value,payStatus:situacaoPagamento,received:valorRecebido,paymentDate:document.getElementById('paymentDate').value,pagamento:document.getElementById('pagamento').value,entrega:document.getElementById('entrega').value,validade:document.getElementById('validade').value,obs:document.getElementById('obs').value,desconto:Number(document.getElementById('desconto').value)||0,acrescimo:Number(document.getElementById('acrescimo').value)||0,items:collectItems(),subtotal:values.sub,total:values.total,nfDecision:anterior.nfDecision||'',nfStatus:anterior.nfStatus||'',nfUpdatedAt:anterior.nfUpdatedAt||''};
+  var precisaDecidirNF=isClosedStatus(q.status)&&!q.nfDecision;
+  if(precisaDecidirNF)q.nfStatus='Aguardando decisão';
+  finalizarSalvarQuote(q,precisaDecidirNF);
+  if(precisaDecidirNF){pendingQuote=db.quotes.find(function(x){return x.id===q.id});document.getElementById('nfModal').classList.add('show')}
+}
+function finalizarSalvarQuote(q,semAviso){
+  var i=db.quotes.findIndex(function(x){return x.id===q.id});
+  if(i>=0)db.quotes[i]=q;else{db.quotes.unshift(q);db.seq++}
+  editQuoteId=q.id;
+  persist();
+  renderQuotes();
+  renderNotas();
+  renderReports();
+  if(!semAviso)alert('Orçamento salvo com sucesso e relatório atualizado.')
+}
+function escolherNF(decisao){
+  if(!pendingQuote)return;
+  pendingQuote.nfDecision=decisao;
+  pendingQuote.nfStatus=decisao==='emitir_agora'?'Aguardando certificado':decisao==='emitir_depois'?'Pendente':'Não solicitada';
+  pendingQuote.nfUpdatedAt=new Date().toISOString();
+  var q=pendingQuote;pendingQuote=null;
+  document.getElementById('nfModal').classList.remove('show');
+  finalizarSalvarQuote(q,true);
+  alert(decisao==='emitir_agora'?'Orçamento salvo e solicitação de nota registrada. A transmissão será liberada após configurar o certificado A1.':'Orçamento salvo e decisão da nota fiscal registrada.')
+}
+function cancelarEscolhaNF(){pendingQuote=null;document.getElementById('nfModal').classList.remove('show');alert('O orçamento já foi salvo. A decisão da nota fiscal ficou pendente.')}
 function solicitarEmissaoNF(id){var q=db.quotes.find(function(x){return x.id===id});if(!q)return;q.nfDecision='emitir_agora';q.nfStatus='Aguardando certificado';q.nfUpdatedAt=new Date().toISOString();persist();renderNotas();alert('Solicitação registrada. A transmissão será liberada após a configuração segura do certificado A1.')}
 function alterarDecisaoNF(id){var q=db.quotes.find(function(x){return x.id===id});if(!q)return;pendingQuote=q;document.getElementById('nfModal').classList.add('show')}
 function loadQuote(id){var q=db.quotes.find(function(x){return x.id===id});if(!q)return;editQuoteId=q.id;['os','data','status','payStatus','received','paymentDate','pagamento','entrega','validade','obs','desconto','acrescimo'].forEach(function(k){document.getElementById(k).value=q[k]||0});document.getElementById('cliente').value=q.clientId;document.getElementById('itens').innerHTML='';q.items.forEach(addItem);calc();document.querySelector('[data-page="orcamento"]').click()}

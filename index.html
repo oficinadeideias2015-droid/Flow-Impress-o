@@ -38,7 +38,7 @@
 <div><label>Prazo de pagamento</label><input id="pagamento"></div>
 <div><label>Prazo de entrega</label><input id="entrega"></div>
 <div><label>Validade do orçamento</label><input id="validade"></div>
-<div><label>Status do orçamento</label><select id="status"><option>Rascunho</option><option>Enviado</option><option>Aprovado</option><option>Reprovado</option><option>Concluído</option></select></div>
+<div><label>Status do orçamento</label><select id="status"><option>Rascunho</option><option>Enviado</option><option>Aprovado</option><option>Reprovado</option><option>Concluído</option><option>Cancelado</option></select></div>
 <div><label>Situação do pagamento</label><select id="payStatus" onchange="syncPayment()"><option>Em aberto</option><option>Parcial</option><option>Recebido</option></select></div>
 <div><label>Valor recebido (R$)</label><input id="received" type="number" min="0" step=".01" value="0"></div>
 <div><label>Data do recebimento</label><input id="paymentDate" type="date"></div>
@@ -53,9 +53,17 @@
 <section id="historico" class="page"><div class="card"><h2>Histórico de orçamentos</h2><div class="tablebox"><table><thead><tr><th>Número</th><th>Data</th><th>Cliente</th><th>Status</th><th>Pagamento</th><th>Total</th><th>Recebido</th><th>Em aberto</th><th>Ações</th></tr></thead><tbody id="quoteList"></tbody></table></div></div></section>
 
 <section id="relatorios" class="page">
-<div class="card"><div class="grid"><div><label>Mês do relatório</label><input id="reportMonth" type="month" onchange="renderReports()"></div><div class="span2"><label>Critério</label><div class="muted">Faturamento considera orçamentos Aprovados ou Concluídos com data no mês selecionado.</div></div></div></div>
-<div class="stats"><div class="stat blue"><small>Orçamentos fechados</small><strong id="rCount">0</strong><span class="muted" id="rClosedValue">R$ 0,00</span></div><div class="stat green"><small>Faturamento do mês</small><strong id="rRevenue">R$ 0,00</strong></div><div class="stat orange"><small>Pagamentos recebidos</small><strong id="rReceived">R$ 0,00</strong></div><div class="stat red"><small>Valores em aberto</small><strong id="rOpen">R$ 0,00</strong></div></div>
-<div class="card"><div class="actions" style="justify-content:space-between"><h2>Movimentação do mês</h2><button onclick="window.print()">Imprimir relatório</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Cliente</th><th>Status</th><th>Pagamento</th><th>Total</th><th>Recebido</th><th>Em aberto</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
+<div class="card"><div class="grid"><div><label>Mês do relatório</label><input id="reportMonth" type="month" onchange="renderReports()"></div><div class="span2"><label>Resumo sincronizado</label><div class="muted">A página mostra todos os orçamentos do mês. O faturamento considera somente os Aprovados ou Concluídos; cancelados não entram no faturamento.</div></div></div></div>
+<div class="stats">
+<div class="stat blue"><small>Orçamentos fechados</small><strong id="rCount">0</strong><span class="muted" id="rClosedValue">R$ 0,00</span></div>
+<div class="stat green"><small>Faturamento do mês</small><strong id="rRevenue">R$ 0,00</strong></div>
+<div class="stat green"><small>Recebido / pago</small><strong id="rReceived">R$ 0,00</strong><span class="muted" id="rPaidCount">0 orçamento(s)</span></div>
+<div class="stat orange"><small>Não pagos</small><strong id="rUnpaid">R$ 0,00</strong><span class="muted" id="rUnpaidCount">0 orçamento(s)</span></div>
+<div class="stat red"><small>Total a receber</small><strong id="rOpen">R$ 0,00</strong><span class="muted">Inclui pagamentos parciais</span></div>
+<div class="stat orange"><small>Pagamentos parciais</small><strong id="rPartial">R$ 0,00</strong><span class="muted" id="rPartialCount">0 orçamento(s)</span></div>
+<div class="stat red"><small>Orçamentos cancelados</small><strong id="rCanceledCount">0</strong><span class="muted" id="rCanceledValue">R$ 0,00 fora do faturamento</span></div>
+</div>
+<div class="card"><div class="actions" style="justify-content:space-between"><h2>Todos os orçamentos do mês</h2><button onclick="window.print()">Imprimir relatório</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status do orçamento</th><th>Situação do pagamento</th><th>Total</th><th>Pago</th><th>A receber</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
 </section>
 
 <section id="clientes" class="page"><div class="card"><h2>Cadastro de cliente</h2><input type="hidden" id="cliId"><div class="grid"><div class="span2"><label>Nome / Razão social</label><input id="cliNome"></div><div><label>CPF/CNPJ</label><input id="cliDoc"></div><div><label>Telefone</label><input id="cliTel"></div><div class="span2"><label>E-mail</label><input id="cliEmail"></div><div class="span2"><label>Endereço</label><input id="cliEnd"></div></div><div class="actions" style="margin-top:12px"><button class="primary" onclick="saveClient()">Salvar cliente</button><button onclick="clearClient()">Limpar</button></div></div><div class="card"><h2>Clientes cadastrados</h2><div id="clientList"></div></div></section>
@@ -149,7 +157,40 @@ function openValue(q){return Math.max(0,Number(q.total||0)-Number(q.received||0)
 function renderQuotes(){var el=document.getElementById('quoteList');el.innerHTML=db.quotes.length?db.quotes.map(function(q){return '<tr><td><strong>'+esc(q.os)+'</strong></td><td>'+new Date(q.date+'T12:00').toLocaleDateString('pt-BR')+'</td><td>'+esc(clientName(q.clientId))+'</td><td><span class="badge">'+esc(q.status)+'</span></td><td>'+esc(q.payStatus||'Em aberto')+'</td><td>'+money(q.total)+'</td><td>'+money(q.received||0)+'</td><td>'+money(openValue(q))+'</td><td><button onclick="loadQuote(\''+q.id+'\')">Abrir</button> <button class="danger" onclick="deleteQuote(\''+q.id+'\')">Excluir</button></td></tr>'}).join(''):'<tr><td colspan="9" class="empty">Nenhum orçamento salvo.</td></tr>'}
 function nfDecisionLabel(v){return v==='emitir_agora'?'Emitir agora':v==='emitir_depois'?'Emitir depois':v==='nao_emitir'?'Não emitir':'Não definida'}
 function renderNotas(){var el=document.getElementById('nfList');if(!el)return;var lista=db.quotes.filter(function(q){return q.status==='Aprovado'||q.status==='Concluído'||q.nfDecision});el.innerHTML=lista.length?lista.map(function(q){var data=q.date?new Date(q.date+'T12:00').toLocaleDateString('pt-BR'):'—',acao=q.nfDecision==='emitir_depois'?'<button class="success" onclick="solicitarEmissaoNF(\''+q.id+'\')">Emitir agora</button> ':' ';return '<tr><td><strong>'+esc(q.os)+'</strong></td><td>'+data+'</td><td>'+esc(clientName(q.clientId))+'</td><td>'+money(q.total)+'</td><td>'+esc(nfDecisionLabel(q.nfDecision))+'</td><td><span class="badge">'+esc(q.nfStatus||'Aguardando decisão')+'</span></td><td>'+acao+'<button onclick="alterarDecisaoNF(\''+q.id+'\')">Alterar decisão</button></td></tr>'}).join(''):'<tr><td colspan="7" class="empty">Nenhuma nota fiscal pendente.</td></tr>'}
-function renderReports(){var month=document.getElementById('reportMonth').value||new Date().toISOString().slice(0,7);document.getElementById('reportMonth').value=month;var all=db.quotes.filter(function(q){return (q.date||'').slice(0,7)===month}),closed=all.filter(function(q){return q.status==='Aprovado'||q.status==='Concluído'}),revenue=closed.reduce(function(a,q){return a+Number(q.total||0)},0),received=closed.reduce(function(a,q){return a+Math.min(Number(q.received||0),Number(q.total||0))},0),open=Math.max(0,revenue-received);document.getElementById('rCount').textContent=closed.length;document.getElementById('rClosedValue').textContent=money(revenue)+' em contratos';document.getElementById('rRevenue').textContent=money(revenue);document.getElementById('rReceived').textContent=money(received);document.getElementById('rOpen').textContent=money(open);document.getElementById('reportList').innerHTML=closed.length?closed.map(function(q){return '<tr><td><strong>'+esc(q.os)+'</strong></td><td>'+esc(clientName(q.clientId))+'</td><td>'+esc(q.status)+'</td><td>'+esc(q.payStatus||'Em aberto')+'</td><td>'+money(q.total)+'</td><td>'+money(q.received||0)+'</td><td>'+money(openValue(q))+'</td></tr>'}).join(''):'<tr><td colspan="7" class="empty">Nenhum orçamento fechado neste mês.</td></tr>'}
+function renderReports(){
+  var month=document.getElementById('reportMonth').value||new Date().toISOString().slice(0,7);
+  document.getElementById('reportMonth').value=month;
+  var all=db.quotes.filter(function(q){return (q.date||'').slice(0,7)===month});
+  var closed=all.filter(function(q){return q.status==='Aprovado'||q.status==='Concluído'});
+  var canceled=all.filter(function(q){return q.status==='Cancelado'});
+  var paid=closed.filter(function(q){return q.payStatus==='Recebido'||Number(q.received||0)>=Number(q.total||0)});
+  var unpaid=closed.filter(function(q){return Number(q.received||0)<=0});
+  var partial=closed.filter(function(q){return Number(q.received||0)>0&&Number(q.received||0)<Number(q.total||0)});
+  var revenue=closed.reduce(function(a,q){return a+Number(q.total||0)},0);
+  var received=closed.reduce(function(a,q){return a+Math.min(Number(q.received||0),Number(q.total||0))},0);
+  var open=closed.reduce(function(a,q){return a+openValue(q)},0);
+  var unpaidValue=unpaid.reduce(function(a,q){return a+Number(q.total||0)},0);
+  var partialOpen=partial.reduce(function(a,q){return a+openValue(q)},0);
+  var canceledValue=canceled.reduce(function(a,q){return a+Number(q.total||0)},0);
+  document.getElementById('rCount').textContent=closed.length;
+  document.getElementById('rClosedValue').textContent=money(revenue)+' em contratos';
+  document.getElementById('rRevenue').textContent=money(revenue);
+  document.getElementById('rReceived').textContent=money(received);
+  document.getElementById('rPaidCount').textContent=paid.length+' orçamento(s) quitado(s)';
+  document.getElementById('rUnpaid').textContent=money(unpaidValue);
+  document.getElementById('rUnpaidCount').textContent=unpaid.length+' orçamento(s) sem pagamento';
+  document.getElementById('rOpen').textContent=money(open);
+  document.getElementById('rPartial').textContent=money(partialOpen);
+  document.getElementById('rPartialCount').textContent=partial.length+' orçamento(s) parcial(is)';
+  document.getElementById('rCanceledCount').textContent=canceled.length;
+  document.getElementById('rCanceledValue').textContent=money(canceledValue)+' fora do faturamento';
+  document.getElementById('reportList').innerHTML=all.length?all.map(function(q){
+    var contaReceber=(q.status==='Aprovado'||q.status==='Concluído')?openValue(q):0;
+    var pago=(q.status==='Aprovado'||q.status==='Concluído')?Math.min(Number(q.received||0),Number(q.total||0)):0;
+    var data=q.date?new Date(q.date+'T12:00').toLocaleDateString('pt-BR'):'—';
+    return '<tr><td><strong>'+esc(q.os)+'</strong></td><td>'+data+'</td><td>'+esc(clientName(q.clientId))+'</td><td><span class="badge">'+esc(q.status||'Rascunho')+'</span></td><td>'+esc(q.payStatus||'Em aberto')+'</td><td>'+money(q.total)+'</td><td>'+money(pago)+'</td><td>'+money(contaReceber)+'</td></tr>'
+  }).join(''):'<tr><td colspan="8" class="empty">Nenhum orçamento neste mês.</td></tr>'
+}
 function saveClient(){var n=document.getElementById('cliNome').value.trim();if(!n){alert('Informe o nome do cliente.');return}var c={id:document.getElementById('cliId').value||uid(),nome:n,doc:document.getElementById('cliDoc').value,tel:document.getElementById('cliTel').value,email:document.getElementById('cliEmail').value,end:document.getElementById('cliEnd').value},i=db.clients.findIndex(function(x){return x.id===c.id});if(i>=0)db.clients[i]=c;else db.clients.push(c);persist();clearClient();renderClients()}
 function editClient(id){var c=db.clients.find(function(x){return x.id===id});document.getElementById('cliId').value=c.id;document.getElementById('cliNome').value=c.nome;document.getElementById('cliDoc').value=c.doc||'';document.getElementById('cliTel').value=c.tel||'';document.getElementById('cliEmail').value=c.email||'';document.getElementById('cliEnd').value=c.end||'';scrollTo(0,0)}
 function delClient(id){if(confirm('Excluir cliente?')){db.clients=db.clients.filter(function(x){return x.id!==id});persist();renderClients()}}

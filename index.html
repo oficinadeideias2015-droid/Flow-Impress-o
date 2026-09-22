@@ -17,6 +17,75 @@
 .headerUser{display:flex;align-items:center;gap:10px}.headerUser button{padding:7px 11px;background:#fff2;color:#fff;border:1px solid #ffffff55}
 .modalOverlay{display:none;position:fixed;inset:0;z-index:1000;background:#101828aa;align-items:center;justify-content:center;padding:20px}.modalOverlay.show{display:flex}.modalBox{width:100%;max-width:560px;background:#fff;border-radius:16px;padding:24px;box-shadow:0 24px 60px #0005}.modalBox h2{margin-top:0}.modalChoices{display:grid;gap:10px;margin-top:18px}.modalChoices button{text-align:left;padding:14px}.nfWarning{background:#fff7e6;border:1px solid #fdb022;color:#7a4b00;padding:12px;border-radius:9px;margin-bottom:16px}.lowStock{background:#fff1f0}.stockOk{color:var(--ok);font-weight:700}.stockLow{color:var(--danger);font-weight:700}.inventorySummary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}@media(max-width:800px){.inventorySummary{grid-template-columns:1fr}}
 
+
+/* Skin Flow Pro — somente tela */
+@media screen{
+:root{--p:#2563eb;--p2:#1d4ed8;--d:#0f172a;--m:#64748b;--b:#e2e8f0;--bg:#f1f5f9;--ok:#059669;--danger:#dc2626;--accent:#22c55e;--surface:#ffffff}
+html{scroll-behavior:smooth}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:
+radial-gradient(circle at 8% 0%,#dbeafe 0,transparent 27rem),
+radial-gradient(circle at 92% 18%,#dcfce7 0,transparent 25rem),
+linear-gradient(180deg,#f8fafc 0%,#eef2f7 100%);min-height:100vh;color:#172033}
+header{position:relative;background:linear-gradient(118deg,#071226 0%,#0f2747 58%,#0b3b3a 100%);padding:20px max(4%,24px);box-shadow:0 10px 30px #0f172a22;border-bottom:3px solid #22c55e;overflow:hidden}
+header:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;right:10%;top:-230px;background:#22c55e26;box-shadow:0 0 0 55px #2563eb12;pointer-events:none}
+header>div,.headerUser{position:relative;z-index:1}
+header h1{font-size:24px;letter-spacing:-.4px;font-weight:800}
+header small{color:#bfdbfe;font-weight:500}
+.headerUser{background:#ffffff0d;border:1px solid #ffffff1f;border-radius:14px;padding:8px 10px;backdrop-filter:blur(8px)}
+.headerUser #saveState{color:#bbf7d0;font-size:12px;font-weight:700}
+.headerUser button{border-radius:10px!important;background:#ffffff14!important;transition:.2s ease}
+.headerUser button:hover{background:#ffffff28!important;transform:translateY(-1px)}
+.wrap{max-width:1380px;padding:24px}
+.nav{position:relative;gap:7px;margin-bottom:22px;padding:7px;background:#ffffffc9;border:1px solid #ffffff;border-radius:16px;box-shadow:0 8px 30px #0f172a10;backdrop-filter:blur(12px)}
+.nav button{padding:10px 15px;border-radius:11px;background:transparent;color:#475569;transition:all .2s ease}
+.nav button:hover{color:#0f172a;background:#eef2ff;transform:translateY(-1px)}
+.nav button.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 7px 16px #2563eb35}
+.page.active{animation:flowFade .25s ease-out}
+@keyframes flowFade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.card{border:1px solid #e7edf4;border-radius:18px;padding:22px;box-shadow:0 8px 28px #0f172a0b;background:#ffffffeb;backdrop-filter:blur(8px);transition:box-shadow .2s ease,border-color .2s ease}
+.card:hover{border-color:#d8e2ef;box-shadow:0 12px 34px #0f172a10}
+h2{font-size:21px;letter-spacing:-.35px;color:#0f172a}
+h3{color:#1e293b}
+label{color:#334155;font-size:12px;text-transform:none;letter-spacing:.1px}
+input,select,textarea{border:1px solid #cbd5e1;border-radius:11px;padding:11px 12px;background:#fff;color:#0f172a;box-shadow:0 1px 2px #0f172a08;transition:border-color .18s,box-shadow .18s,background .18s}
+input:hover,select:hover,textarea:hover{border-color:#94a3b8}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-shadow:0 0 0 4px #3b82f61c;background:#fff}
+button{border-radius:10px;padding:10px 15px;transition:transform .16s ease,box-shadow .16s ease,filter .16s ease}
+button:hover{transform:translateY(-1px);filter:brightness(.98)}
+button:active{transform:translateY(0)}
+button.primary{background:linear-gradient(135deg,#2563eb,#1d4ed8);box-shadow:0 6px 14px #2563eb2e}
+button.success{background:linear-gradient(135deg,#059669,#047857);box-shadow:0 6px 14px #05966925}
+button.danger{background:#fff1f2;color:#be123c;border:1px solid #fecdd3}
+button.ghost{background:#fff;border:1px solid #dbe3ee}
+.tablebox{border:1px solid #e7edf4;border-radius:14px;background:#fff}
+table{background:#fff}
+th{padding:12px 11px;background:linear-gradient(180deg,#f8fafc,#f1f5f9);color:#475569;letter-spacing:.35px;border-bottom:1px solid #dbe3ee}
+td{padding:12px 11px}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#f8fbff}
+.badge{display:inline-block;background:#eaf2ff;color:#1d4ed8;border:1px solid #cfe0ff;font-weight:700}
+.totalbox{background:linear-gradient(145deg,#f8fafc,#eef6ff);border:1px solid #dbeafe;border-radius:14px;padding:12px 16px}
+.totalbox .grand{border-color:#2563eb;color:#0f3b82}
+.stats,.inventorySummary{gap:14px}
+.stat{position:relative;overflow:hidden;border:1px solid #e5ebf3!important;border-left-width:5px!important;border-radius:16px;padding:20px;box-shadow:0 7px 24px #0f172a0a;background:linear-gradient(145deg,#fff,#fbfdff)}
+.stat:after{content:"";position:absolute;width:68px;height:68px;border-radius:50%;right:-30px;top:-30px;background:#2563eb0b}
+.stat strong{font-size:26px;letter-spacing:-.7px;color:#0f172a}
+.notice,.nfWarning{border-radius:12px;padding:13px 15px}
+.loginScreen{background:
+radial-gradient(circle at 20% 20%,#2563eb77 0,transparent 32rem),
+radial-gradient(circle at 90% 80%,#22c55e55 0,transparent 28rem),
+linear-gradient(135deg,#071226,#0f2747)}
+.loginBox{border:1px solid #ffffff66;border-radius:22px;padding:34px;box-shadow:0 30px 80px #02061777}
+.loginBox h1{font-size:28px;color:#0f172a}
+.modalOverlay{backdrop-filter:blur(5px)}
+.modalBox{border-radius:20px;border:1px solid #fff;padding:28px}
+.lowStock{background:#fff7f7!important}
+.empty{padding:34px}
+}
+@media screen and (max-width:800px){
+header{padding:16px}.headerUser{width:100%;flex-wrap:wrap}.wrap{padding:14px}.nav{border-radius:13px;margin-bottom:14px}.card{padding:16px;border-radius:15px}
+}
+@media screen and (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body class="auth-pending">

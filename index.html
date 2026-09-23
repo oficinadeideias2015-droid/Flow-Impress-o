@@ -86,6 +86,29 @@ linear-gradient(135deg,#071226,#0f2747)}
 header{padding:16px}.headerUser{width:100%;flex-wrap:wrap}.wrap{padding:14px}.nav{border-radius:13px;margin-bottom:14px}.card{padding:16px;border-radius:15px}
 }
 @media screen and (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+@media screen{
+.reportPage{--report-blue:#2563eb;--report-violet:#7c3aed;--report-green:#059669;--report-amber:#d97706;--report-cyan:#0891b2;--report-orange:#ea580c;--report-red:#dc2626}
+.reportToolbar{background:linear-gradient(120deg,#f8fbff,#f0fdf7);border-color:#dbeafe}
+.reportIntro{display:flex;align-items:center;gap:14px;height:100%}.reportIntro h2{margin:0 0 3px}.reportIntro>.reportIcon{width:48px;height:48px;color:#2563eb;background:#dbeafe}
+.reportStats{grid-template-columns:repeat(auto-fit,minmax(225px,1fr))}
+.reportCard{min-height:152px;border:0!important;border-left:0!important;padding:19px 20px!important;color:#fff;box-shadow:0 12px 28px #0f172a18!important;transition:transform .2s ease,box-shadow .2s ease!important}
+.reportCard:hover{transform:translateY(-3px);box-shadow:0 17px 34px #0f172a25!important}
+.reportCard:after{width:115px;height:115px;right:-42px;top:-48px;background:#ffffff16}
+.reportCardHead{display:flex;align-items:center;gap:10px;margin-bottom:16px}.reportCard small{color:#ffffffde!important;margin:0!important;font-size:13px}.reportCard strong{color:#fff!important;font-size:27px}.reportCard .muted{display:block;color:#ffffffe0!important;margin-top:5px}
+.reportIcon{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:11px;background:#ffffff24;color:#fff;flex:0 0 auto}
+.reportIcon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.reportCard.contracts{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.reportCard.revenue{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.reportCard.received{background:linear-gradient(135deg,#059669,#047857)}
+.reportCard.unpaid{background:linear-gradient(135deg,#d97706,#b45309)}
+.reportCard.receivable{background:linear-gradient(135deg,#0891b2,#0e7490)}
+.reportCard.partial{background:linear-gradient(135deg,#ea580c,#c2410c)}
+.reportCard.canceled{background:linear-gradient(135deg,#dc2626,#b91c1c)}
+.reportTableCard{border-top:4px solid #2563eb}.reportTableTitle{align-items:center;justify-content:space-between;margin-bottom:14px}.reportTableTitle>div{display:flex;align-items:center;gap:10px}.reportTableTitle h2{margin:0}.reportTableTitle .reportIcon{width:40px;height:40px;background:#dbeafe;color:#2563eb}
+.reportTableCard thead th{background:#eaf2ff;color:#1e3a8a}.reportTableCard tbody tr:nth-child(even){background:#f8fafc}
+}
+@media screen and (max-width:520px){.reportStats{grid-template-columns:1fr}.reportIntro{align-items:flex-start}.reportTableTitle{align-items:flex-start;flex-direction:column}}
 </style>
 </head>
 <body class="auth-pending">
@@ -121,18 +144,18 @@ header{padding:16px}.headerUser{width:100%;flex-wrap:wrap}.wrap{padding:14px}.na
 
 <section id="historico" class="page"><div class="card"><h2>Histórico de orçamentos</h2><div class="tablebox"><table><thead><tr><th>Número</th><th>Data</th><th>Cliente</th><th>Status</th><th>Pagamento</th><th>Total</th><th>Recebido</th><th>Em aberto</th><th>Ações</th></tr></thead><tbody id="quoteList"></tbody></table></div></div></section>
 
-<section id="relatorios" class="page">
-<div class="card"><div class="grid"><div><label>Mês do relatório</label><input id="reportMonth" type="month" onchange="renderReports()"></div><div class="span2"><label>Resumo sincronizado</label><div class="muted">A página mostra todos os orçamentos do mês. O faturamento considera somente os Aprovados ou Concluídos; cancelados não entram no faturamento.</div></div></div></div>
-<div class="stats">
-<div class="stat blue"><small>Orçamentos fechados</small><strong id="rCount">0</strong><span class="muted" id="rClosedValue">R$ 0,00</span></div>
-<div class="stat green"><small>Faturamento do mês</small><strong id="rRevenue">R$ 0,00</strong></div>
-<div class="stat green"><small>Recebido / pago</small><strong id="rReceived">R$ 0,00</strong><span class="muted" id="rPaidCount">0 orçamento(s)</span></div>
-<div class="stat orange"><small>Não pagos</small><strong id="rUnpaid">R$ 0,00</strong><span class="muted" id="rUnpaidCount">0 orçamento(s)</span></div>
-<div class="stat red"><small>Total a receber</small><strong id="rOpen">R$ 0,00</strong><span class="muted">Inclui pagamentos parciais</span></div>
-<div class="stat orange"><small>Pagamentos parciais</small><strong id="rPartial">R$ 0,00</strong><span class="muted" id="rPartialCount">0 orçamento(s)</span></div>
-<div class="stat red"><small>Orçamentos cancelados</small><strong id="rCanceledCount">0</strong><span class="muted" id="rCanceledValue">R$ 0,00 fora do faturamento</span></div>
+<section id="relatorios" class="page reportPage">
+<div class="card reportToolbar"><div class="grid"><div><label>Mês do relatório</label><input id="reportMonth" type="month" onchange="renderReports()"></div><div class="span2"><div class="reportIntro"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V9m5 10V5m5 14v-7m5 7V3"/></svg></span><div><h2>Painel financeiro mensal</h2><div class="muted">Resumo sincronizado de todos os orçamentos. Fechados entram no faturamento; cancelados ficam separados.</div></div></div></div></div></div>
+<div class="stats reportStats">
+<div class="stat reportCard contracts"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6M7 3h7l4 4v14H7z"/></svg></span><small>Orçamentos fechados</small></div><strong id="rCount">0</strong><span class="muted" id="rClosedValue">R$ 0,00</span></div>
+<div class="stat reportCard revenue"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 17l4-5 4 3 6-8m0 0v5m0-5h-5"/></svg></span><small>Faturamento do mês</small></div><strong id="rRevenue">R$ 0,00</strong><span class="muted">Contratos aprovados e concluídos</span></div>
+<div class="stat reportCard received"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2v20m5-16H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><small>Recebido / pago</small></div><strong id="rReceived">R$ 0,00</strong><span class="muted" id="rPaidCount">0 orçamento(s)</span></div>
+<div class="stat reportCard unpaid"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 8v5m0 4h.01M10.3 3.7 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.7a2 2 0 0 0-3.4 0z"/></svg></span><small>Não pagos</small></div><strong id="rUnpaid">R$ 0,00</strong><span class="muted" id="rUnpaidCount">0 orçamento(s)</span></div>
+<div class="stat reportCard receivable"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-7m4-5 4-4 4 4m-4-4v13"/></svg></span><small>Total a receber</small></div><strong id="rOpen">R$ 0,00</strong><span class="muted">Inclui pagamentos parciais</span></div>
+<div class="stat reportCard partial"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10H12zm0 0v10H2"/></svg></span><small>Pagamentos parciais</small></div><strong id="rPartial">R$ 0,00</strong><span class="muted" id="rPartialCount">0 orçamento(s)</span></div>
+<div class="stat reportCard canceled"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><small>Orçamentos cancelados</small></div><strong id="rCanceledCount">0</strong><span class="muted" id="rCanceledValue">R$ 0,00 fora do faturamento</span></div>
 </div>
-<div class="card"><div class="actions" style="justify-content:space-between"><h2>Todos os orçamentos do mês</h2><button onclick="window.print()">Imprimir relatório</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status do orçamento</th><th>Situação do pagamento</th><th>Total</th><th>Pago</th><th>A receber</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
+<div class="card reportTableCard"><div class="actions reportTableTitle"><div><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zm0 5h16M9 5v14m6-14v14"/></svg></span><h2>Todos os orçamentos do mês</h2></div><button onclick="window.print()">Imprimir relatório</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status do orçamento</th><th>Situação do pagamento</th><th>Total</th><th>Pago</th><th>A receber</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
 </section>
 
 <section id="clientes" class="page"><div class="card"><h2>Cadastro de cliente</h2><input type="hidden" id="cliId"><div class="grid"><div class="span2"><label>Nome / Razão social</label><input id="cliNome"></div><div><label>CPF/CNPJ</label><input id="cliDoc"></div><div><label>Telefone</label><input id="cliTel"></div><div class="span2"><label>E-mail</label><input id="cliEmail"></div><div class="span2"><label>Endereço</label><input id="cliEnd"></div></div><div class="actions" style="margin-top:12px"><button class="primary" onclick="saveClient()">Salvar cliente</button><button onclick="clearClient()">Limpar</button></div></div><div class="card"><h2>Clientes cadastrados</h2><div id="clientList"></div></div></section>

@@ -129,6 +129,10 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 .expenseFilters{display:grid;grid-template-columns:180px 180px 1fr;gap:12px;align-items:end}.expenseSummary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.expenseStat{position:relative;overflow:hidden}.expenseStat:after{content:"";position:absolute;right:-22px;top:-24px;width:82px;height:82px;border-radius:50%;background:currentColor;opacity:.07}.expenseIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;font-size:21px;margin-bottom:12px}.expenseStat.total{border-left:5px solid #1479e8}.expenseStat.total .expenseIcon{background:#e8f2ff;color:#1479e8}.expenseStat.paid{border-left:5px solid #16a34a}.expenseStat.paid .expenseIcon{background:#dcfce7;color:#15803d}.expenseStat.pending{border-left:5px solid #f59e0b}.expenseStat.pending .expenseIcon{background:#fef3c7;color:#b45309}.expenseStat.count{border-left:5px solid #7c3aed}.expenseStat.count .expenseIcon{background:#ede9fe;color:#6d28d9}.expenseStatus{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}.expenseStatus.pago{background:#dcfce7;color:#166534}.expenseStatus.pendente{background:#fef3c7;color:#92400e}.expenseActions{display:flex;gap:6px;flex-wrap:wrap}.expenseActions button{padding:7px 9px}.expenseValue{font-weight:800;white-space:nowrap}.expenseRowPending{background:#fffbeb}.checkLabel{display:flex;align-items:center;gap:8px;font-weight:600;padding-top:26px}.checkLabel input{width:auto}
 @media(max-width:800px){.expenseSummary{grid-template-columns:1fr 1fr}.expenseFilters{grid-template-columns:1fr 1fr}.expenseFilters>div:last-child{grid-column:1/-1}}
 @media(max-width:520px){.expenseSummary,.expenseFilters{grid-template-columns:1fr}.expenseFilters>div:last-child{grid-column:auto}}
+
+/* Contas a pagar e impressão de relatórios */
+.payableCard{border-top:4px solid #f59e0b}.payableHeader{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;flex-wrap:wrap}.payableTotals{display:flex;gap:18px;flex-wrap:wrap;background:#fff7e6;border:1px solid #fed7aa;border-radius:10px;padding:10px 14px}.overdueText{color:#b42318}.dueOverdue{color:#b42318;font-weight:800}.dueSoon{color:#b45309;font-weight:700}.payableStatus{font-weight:700;color:#92400e}.payableEmpty{padding:22px;text-align:center;color:#667085}.reportPrintFrame{position:fixed!important;left:-10000px!important;top:0!important;width:1px!important;height:1px!important;border:0!important;visibility:hidden!important}
+@media(max-width:700px){.payableTotals{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body class="auth-pending">
@@ -175,7 +179,7 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 <div class="stat reportCard partial"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10H12zm0 0v10H2"/></svg></span><small>Pagamentos parciais</small></div><strong id="rPartial">R$ 0,00</strong><span class="muted" id="rPartialCount">0 orçamento(s)</span></div>
 <div class="stat reportCard canceled"><div class="reportCardHead"><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><small>Orçamentos cancelados</small></div><strong id="rCanceledCount">0</strong><span class="muted" id="rCanceledValue">R$ 0,00 fora do faturamento</span></div>
 </div>
-<div class="card reportTableCard"><div class="actions reportTableTitle"><div><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zm0 5h16M9 5v14m6-14v14"/></svg></span><h2>Todos os orçamentos do mês</h2></div><button onclick="window.print()">Imprimir relatório</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status do orçamento</th><th>Situação do pagamento</th><th>Total</th><th>Pago</th><th>A receber</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
+<div class="card reportTableCard"><div class="actions reportTableTitle"><div><span class="reportIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zm0 5h16M9 5v14m6-14v14"/></svg></span><h2>Todos os orçamentos do mês</h2></div><button onclick="printMonthlyReport()">Imprimir / Salvar PDF</button></div><div class="tablebox"><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status do orçamento</th><th>Situação do pagamento</th><th>Total</th><th>Pago</th><th>A receber</th></tr></thead><tbody id="reportList"></tbody></table></div></div>
 </section>
 
 <section id="clientes" class="page"><div class="card"><h2>Cadastro de cliente</h2><input type="hidden" id="cliId"><div class="grid"><div class="span2"><label>Nome / Razão social</label><input id="cliNome"></div><div><label>CPF/CNPJ</label><input id="cliDoc"></div><div><label>Telefone</label><input id="cliTel"></div><div class="span2"><label>E-mail</label><input id="cliEmail"></div><div class="span2"><label>Endereço</label><input id="cliEnd"></div></div><div class="actions" style="margin-top:12px"><button class="primary" onclick="saveClient()">Salvar cliente</button><button onclick="clearClient()">Limpar</button></div></div><div class="card"><h2>Clientes cadastrados</h2><div id="clientList"></div></div></section>
@@ -225,6 +229,7 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 <div><label>Valor (R$)</label><input id="expValue" type="number" min="0" step=".01" placeholder="0,00"></div>
 <div><label>Situação</label><select id="expStatus"><option>Pago</option><option>Pendente</option></select></div>
 <div><label>Forma de pagamento</label><select id="expPayment"><option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Boleto</option><option>Transferência</option><option>Outro</option></select></div>
+<div><label>Data de vencimento</label><input id="expDueDate" type="date"></div>
 <div><label>Fornecedor / favorecido</label><input id="expSupplier" placeholder="Empresa ou profissional"></div>
 <div><label>Documento</label><input id="expDocument" placeholder="NF, recibo ou referência"></div>
 <div class="span2"><label>Observações</label><input id="expObs" placeholder="Informações adicionais"></div>
@@ -246,6 +251,11 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 <div class="stat expenseStat paid"><span class="expenseIcon">✓</span><small>Despesas pagas</small><strong id="expPaid">R$ 0,00</strong></div>
 <div class="stat expenseStat pending"><span class="expenseIcon">!</span><small>A pagar</small><strong id="expPending">R$ 0,00</strong></div>
 <div class="stat expenseStat count"><span class="expenseIcon">#</span><small>Lançamentos</small><strong id="expCount">0</strong></div>
+</div>
+
+<div class="card payableCard">
+<div class="payableHeader"><div><h2 style="margin-bottom:3px">Contas a pagar</h2><div class="muted">Despesas pendentes organizadas pela data de vencimento.</div></div><div class="payableTotals"><span>Em aberto: <strong id="payableTotal">R$ 0,00</strong></span><span class="overdueText">Vencidas: <strong id="payableOverdue">R$ 0,00</strong></span></div></div>
+<div class="tablebox" style="margin-top:12px"><table><thead><tr><th>Vencimento</th><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th class="num">Valor</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="payableList"></tbody></table></div>
 </div>
 
 <div class="card">
@@ -429,7 +439,7 @@ function importBackup(e){var f=e.target.files[0];if(!f)return;var r=new FileRead
 
 function ensureExpenses(){if(!Array.isArray(db.expenses))db.expenses=[]}
 function clearExpense(){
- ['expId','expDesc','expValue','expSupplier','expDocument','expObs'].forEach(function(id){document.getElementById(id).value=''});
+ ['expId','expDesc','expValue','expSupplier','expDocument','expObs','expDueDate'].forEach(function(id){document.getElementById(id).value=''});
  document.getElementById('expDate').value=new Date().toISOString().slice(0,10);
  document.getElementById('expCategory').value='Materiais e insumos';
  document.getElementById('expStatus').value='Pago';
@@ -442,14 +452,14 @@ function saveExpense(){
  if(!date){alert('Informe a data da despesa.');return}
  if(!desc){alert('Informe a descrição da despesa.');return}
  if(value<=0){alert('Informe um valor maior que zero.');return}
- var e={id:document.getElementById('expId').value||uid(),date:date,desc:desc,category:document.getElementById('expCategory').value,value:value,status:document.getElementById('expStatus').value,payment:document.getElementById('expPayment').value,supplier:document.getElementById('expSupplier').value,document:document.getElementById('expDocument').value,obs:document.getElementById('expObs').value,recurring:document.getElementById('expRecurring').checked,createdAt:new Date().toISOString()};
+ var e={id:document.getElementById('expId').value||uid(),date:date,desc:desc,category:document.getElementById('expCategory').value,value:value,status:document.getElementById('expStatus').value,payment:document.getElementById('expPayment').value,dueDate:document.getElementById('expDueDate').value,supplier:document.getElementById('expSupplier').value,document:document.getElementById('expDocument').value,obs:document.getElementById('expObs').value,recurring:document.getElementById('expRecurring').checked,createdAt:new Date().toISOString()};
  var i=db.expenses.findIndex(function(x){return x.id===e.id});
  if(i>=0){e.createdAt=db.expenses[i].createdAt||e.createdAt;db.expenses[i]=e}else db.expenses.push(e);
  persist();clearExpense();renderExpenses();alert('Despesa salva com sucesso.');
 }
 function editExpense(id){
  ensureExpenses();var e=db.expenses.find(function(x){return x.id===id});if(!e)return;
- document.getElementById('expId').value=e.id;document.getElementById('expDate').value=e.date||'';document.getElementById('expDesc').value=e.desc||'';document.getElementById('expCategory').value=e.category||'Outras despesas';document.getElementById('expValue').value=e.value||0;document.getElementById('expStatus').value=e.status||'Pendente';document.getElementById('expPayment').value=e.payment||'Outro';document.getElementById('expSupplier').value=e.supplier||'';document.getElementById('expDocument').value=e.document||'';document.getElementById('expObs').value=e.obs||'';document.getElementById('expRecurring').checked=!!e.recurring;
+ document.getElementById('expId').value=e.id;document.getElementById('expDate').value=e.date||'';document.getElementById('expDesc').value=e.desc||'';document.getElementById('expCategory').value=e.category||'Outras despesas';document.getElementById('expValue').value=e.value||0;document.getElementById('expStatus').value=e.status||'Pendente';document.getElementById('expPayment').value=e.payment||'Outro';document.getElementById('expDueDate').value=e.dueDate||'';document.getElementById('expSupplier').value=e.supplier||'';document.getElementById('expDocument').value=e.document||'';document.getElementById('expObs').value=e.obs||'';document.getElementById('expRecurring').checked=!!e.recurring;
  document.getElementById('despesas').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function deleteExpense(id){if(confirm('Excluir esta despesa?')){db.expenses=db.expenses.filter(function(x){return x.id!==id});persist();renderExpenses()}}
@@ -461,11 +471,42 @@ function renderExpenses(){
  var total=monthList.reduce(function(a,e){return a+Number(e.value||0)},0),paid=monthList.filter(function(e){return e.status==='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0),pending=monthList.filter(function(e){return e.status!=='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0);
  document.getElementById('expTotal').textContent=money(total);document.getElementById('expPaid').textContent=money(paid);document.getElementById('expPending').textContent=money(pending);document.getElementById('expCount').textContent=monthList.length;
  document.getElementById('expenseList').innerHTML=list.length?list.map(function(e){return '<tr class="'+(e.status==='Pago'?'':'expenseRowPending')+'"><td>'+expenseDate(e.date)+'</td><td><strong>'+esc(e.desc)+'</strong>'+(e.recurring?'<div class="muted">Recorrente</div>':'')+(e.obs?'<div class="muted">'+esc(e.obs)+'</div>':'')+'</td><td>'+esc(e.category||'—')+'</td><td>'+esc(e.supplier||'—')+(e.document?'<div class="muted">'+esc(e.document)+'</div>':'')+'</td><td><span class="expenseStatus '+(e.status==='Pago'?'pago':'pendente')+'">'+esc(e.status||'Pendente')+'</span></td><td>'+esc(e.payment||'—')+'</td><td class="num expenseValue">'+money(e.value)+'</td><td><div class="expenseActions"><button onclick="toggleExpense(\''+e.id+'\')">'+(e.status==='Pago'?'Marcar pendente':'Marcar pago')+'</button><button onclick="editExpense(\''+e.id+'\')">Editar</button><button class="danger" onclick="deleteExpense(\''+e.id+'\')">Excluir</button></div></td></tr>'}).join(''):'<tr><td colspan="8" class="empty">Nenhuma despesa encontrada neste período.</td></tr>';
+ renderPayables();
 }
+
+function dueInfo(date){
+ if(!date)return {text:'Sem vencimento',cls:''};
+ var today=new Date();today.setHours(0,0,0,0);var due=new Date(date+'T12:00:00'),diff=Math.ceil((due-today)/86400000);
+ if(diff<0)return {text:expenseDate(date)+' · '+Math.abs(diff)+' dia(s) em atraso',cls:'dueOverdue'};
+ if(diff===0)return {text:expenseDate(date)+' · vence hoje',cls:'dueSoon'};
+ if(diff<=7)return {text:expenseDate(date)+' · vence em '+diff+' dia(s)',cls:'dueSoon'};
+ return {text:expenseDate(date),cls:''};
+}
+function renderPayables(){
+ ensureExpenses();var list=db.expenses.filter(function(e){return e.status!=='Pago'}).sort(function(a,b){return String(a.dueDate||'9999').localeCompare(String(b.dueDate||'9999'))}),today=new Date();today.setHours(0,0,0,0);
+ var total=list.reduce(function(a,e){return a+Number(e.value||0)},0),overdue=list.filter(function(e){return e.dueDate&&new Date(e.dueDate+'T12:00:00')<today}).reduce(function(a,e){return a+Number(e.value||0)},0);
+ document.getElementById('payableTotal').textContent=money(total);document.getElementById('payableOverdue').textContent=money(overdue);
+ document.getElementById('payableList').innerHTML=list.length?list.map(function(e){var due=dueInfo(e.dueDate);return '<tr class="'+(due.cls==='dueOverdue'?'expenseRowPending':'')+'"><td class="'+due.cls+'">'+due.text+'</td><td><strong>'+esc(e.desc)+'</strong></td><td>'+esc(e.supplier||'—')+'</td><td>'+esc(e.category||'—')+'</td><td class="num expenseValue">'+money(e.value)+'</td><td><span class="expenseStatus pendente">Pendente</span></td><td><div class="expenseActions"><button class="success" onclick="toggleExpense(\''+e.id+'\')">Marcar como paga</button><button onclick="editExpense(\''+e.id+'\')">Editar</button></div></td></tr>'}).join(''):'<tr><td colspan="7" class="payableEmpty">Nenhuma conta pendente. Tudo pago!</td></tr>';
+}
+function openPrintDocument(title,body){
+ var old=document.getElementById('reportPrintFrame');if(old)old.remove();
+ var frame=document.createElement('iframe');frame.id='reportPrintFrame';frame.className='reportPrintFrame';frame.title=title;document.body.appendChild(frame);
+ var doc=frame.contentWindow.document;
+ doc.open();doc.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>@page{size:A4;margin:14mm}*{box-sizing:border-box}body{font:12px Arial,sans-serif;color:#172033;margin:0}h1{font-size:21px;margin:0 0 3px}.sub{color:#667085;margin-bottom:18px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0}.box{border:1px solid #d0d5dd;border-radius:7px;padding:10px}.box span{display:block;color:#667085;font-size:10px;text-transform:uppercase}.box strong{display:block;font-size:16px;margin-top:4px}table{width:100%;border-collapse:collapse;table-layout:auto}th,td{border-bottom:1px solid #d0d5dd;padding:7px 6px;text-align:left;vertical-align:top}th{background:#eef4fa;font-size:10px;text-transform:uppercase}.num{text-align:right;white-space:nowrap}.footer{margin-top:18px;padding-top:8px;border-top:1px solid #d0d5dd;color:#667085;font-size:10px}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body>'+body+'</body></html>');doc.close();
+ setTimeout(function(){try{frame.contentWindow.focus();frame.contentWindow.print();setTimeout(function(){frame.remove()},1500)}catch(err){alert('Não foi possível abrir a impressão. Tente novamente.')}},350);
+}
+function printMonthlyReport(){
+ var month=document.getElementById('reportMonth').value||new Date().toISOString().slice(0,7),all=db.quotes.filter(function(q){return (q.date||'').slice(0,7)===month}),closed=all.filter(function(q){return isClosedStatus(q.status)}),canceled=all.filter(function(q){return q.status==='Cancelado'}),revenue=closed.reduce(function(a,q){return a+Number(q.total||0)},0),received=closed.reduce(function(a,q){return a+Math.min(Number(q.received||0),Number(q.total||0))},0),open=closed.reduce(function(a,q){return a+openValue(q)},0);
+ var rows=all.map(function(q){var receive=isClosedStatus(q.status)?openValue(q):0,paid=isClosedStatus(q.status)?Math.min(Number(q.received||0),Number(q.total||0)):0;return '<tr><td><strong>'+esc(q.os)+'</strong></td><td>'+expenseDate(q.date)+'</td><td>'+esc(clientName(q.clientId))+'</td><td>'+esc(q.status||'Rascunho')+'</td><td>'+esc(q.payStatus||'Em aberto')+'</td><td class="num">'+money(q.total)+'</td><td class="num">'+money(paid)+'</td><td class="num">'+money(receive)+'</td></tr>'}).join('');
+ var body='<h1>'+esc(db.company.nome||'Flow Comunicação Visual')+'</h1><div class="sub">Relatório financeiro mensal · '+month.split('-').reverse().join('/')+'</div><div class="summary"><div class="box"><span>Orçamentos fechados</span><strong>'+closed.length+'</strong></div><div class="box"><span>Faturamento</span><strong>'+money(revenue)+'</strong></div><div class="box"><span>Recebido</span><strong>'+money(received)+'</strong></div><div class="box"><span>A receber</span><strong>'+money(open)+'</strong></div></div><table><thead><tr><th>OS</th><th>Data</th><th>Cliente</th><th>Status</th><th>Pagamento</th><th class="num">Total</th><th class="num">Pago</th><th class="num">A receber</th></tr></thead><tbody>'+(rows||'<tr><td colspan="8">Nenhum orçamento neste mês.</td></tr>')+'</tbody></table><div class="footer">Cancelados: '+canceled.length+' · Relatório gerado em '+new Date().toLocaleString('pt-BR')+'</div>';
+ openPrintDocument('Relatório mensal '+month,body);
+}
+
 function printExpenses(){
- var month=document.getElementById('expMonth').value||new Date().toISOString().slice(0,7),list=db.expenses.filter(function(e){return String(e.date||'').slice(0,7)===month}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))}),total=list.reduce(function(a,e){return a+Number(e.value||0)},0),paid=list.filter(function(e){return e.status==='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0),pending=total-paid,w=window.open('','_blank');
- var rows=list.map(function(e){return '<tr><td>'+expenseDate(e.date)+'</td><td>'+esc(e.desc)+'</td><td>'+esc(e.category||'')+'</td><td>'+esc(e.status||'')+'</td><td style="text-align:right">'+money(e.value)+'</td></tr>'}).join('');
- w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Relatório de despesas</title><style>body{font:13px Arial;padding:30px;color:#172033}h1{margin:0}small{color:#667085}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}th{background:#eef4fa}.summary{display:flex;gap:24px;margin-top:18px;font-size:15px}.summary strong{display:block;font-size:20px}@media print{button{display:none}}</style></head><body><h1>'+esc(db.company.nome||'Flow Comunicação Visual')+'</h1><small>Relatório de despesas — '+month.split('-').reverse().join('/')+'</small><div class="summary"><div>Total<strong>'+money(total)+'</strong></div><div>Pago<strong>'+money(paid)+'</strong></div><div>A pagar<strong>'+money(pending)+'</strong></div></div><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Situação</th><th style="text-align:right">Valor</th></tr></thead><tbody>'+rows+'</tbody></table><button onclick="window.print()">Imprimir</button></body></html>');w.document.close();
+ var month=document.getElementById('expMonth').value||new Date().toISOString().slice(0,7),list=db.expenses.filter(function(e){return String(e.date||'').slice(0,7)===month}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))}),total=list.reduce(function(a,e){return a+Number(e.value||0)},0),paid=list.filter(function(e){return e.status==='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0),pending=total-paid;
+ var rows=list.map(function(e){return '<tr><td>'+expenseDate(e.date)+'</td><td>'+esc(e.desc)+'</td><td>'+esc(e.category||'')+'</td><td>'+esc(e.supplier||'—')+'</td><td>'+esc(e.status||'')+'</td><td>'+expenseDate(e.dueDate)+'</td><td class="num">'+money(e.value)+'</td></tr>'}).join('');
+ var body='<h1>'+esc(db.company.nome||'Flow Comunicação Visual')+'</h1><div class="sub">Relatório de despesas · '+month.split('-').reverse().join('/')+'</div><div class="summary"><div class="box"><span>Total do mês</span><strong>'+money(total)+'</strong></div><div class="box"><span>Pago</span><strong>'+money(paid)+'</strong></div><div class="box"><span>A pagar</span><strong>'+money(pending)+'</strong></div><div class="box"><span>Lançamentos</span><strong>'+list.length+'</strong></div></div><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Fornecedor</th><th>Situação</th><th>Vencimento</th><th class="num">Valor</th></tr></thead><tbody>'+(rows||'<tr><td colspan="7">Nenhuma despesa neste mês.</td></tr>')+'</tbody></table><div class="footer">Relatório gerado em '+new Date().toLocaleString('pt-BR')+'</div>';
+ openPrintDocument('Relatório de despesas '+month,body);
 }
 
 function ensureInventory(){if(!Array.isArray(db.tools))db.tools=[];if(!Array.isArray(db.materials))db.materials=[];ensureExpenses()}

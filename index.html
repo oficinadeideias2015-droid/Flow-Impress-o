@@ -124,6 +124,11 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 .badge{background:#e8f2ff;color:#075caf}.logoPreview{background:#f8fbff;border:1px solid #cfe0ef;border-radius:12px;padding:8px}
 }
 @media screen and (max-width:520px){.brandLogoFrame{width:58px;height:50px}.brandIdentity{gap:10px}.loginBrandMark{width:124px;height:94px}}
+
+/* Aba de despesas */
+.expenseFilters{display:grid;grid-template-columns:180px 180px 1fr;gap:12px;align-items:end}.expenseSummary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.expenseStat{position:relative;overflow:hidden}.expenseStat:after{content:"";position:absolute;right:-22px;top:-24px;width:82px;height:82px;border-radius:50%;background:currentColor;opacity:.07}.expenseIcon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;font-size:21px;margin-bottom:12px}.expenseStat.total{border-left:5px solid #1479e8}.expenseStat.total .expenseIcon{background:#e8f2ff;color:#1479e8}.expenseStat.paid{border-left:5px solid #16a34a}.expenseStat.paid .expenseIcon{background:#dcfce7;color:#15803d}.expenseStat.pending{border-left:5px solid #f59e0b}.expenseStat.pending .expenseIcon{background:#fef3c7;color:#b45309}.expenseStat.count{border-left:5px solid #7c3aed}.expenseStat.count .expenseIcon{background:#ede9fe;color:#6d28d9}.expenseStatus{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700}.expenseStatus.pago{background:#dcfce7;color:#166534}.expenseStatus.pendente{background:#fef3c7;color:#92400e}.expenseActions{display:flex;gap:6px;flex-wrap:wrap}.expenseActions button{padding:7px 9px}.expenseValue{font-weight:800;white-space:nowrap}.expenseRowPending{background:#fffbeb}.checkLabel{display:flex;align-items:center;gap:8px;font-weight:600;padding-top:26px}.checkLabel input{width:auto}
+@media(max-width:800px){.expenseSummary{grid-template-columns:1fr 1fr}.expenseFilters{grid-template-columns:1fr 1fr}.expenseFilters>div:last-child{grid-column:1/-1}}
+@media(max-width:520px){.expenseSummary,.expenseFilters{grid-template-columns:1fr}.expenseFilters>div:last-child{grid-column:auto}}
 </style>
 </head>
 <body class="auth-pending">
@@ -131,7 +136,7 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 <header><div class="brandIdentity"><div class="brandLogoFrame"><img id="headerBrandLogo" alt="Logo Flow"><span class="brandFallback" id="headerBrandFallback">FL<i>O</i>W</span></div><div><h1 id="brand">Flow Comunicação Visual</h1><small>Sistema gratuito de orçamentos e ordens de serviço</small></div></div><div class="headerUser"><span id="loggedUser"></span><span id="saveState">Dados salvos neste aparelho</span><button onclick="sairSistema()">Sair</button></div></header>
 <div class="wrap">
 <nav class="nav no-print">
-<button class="primary" data-page="orcamento">Novo orçamento</button><button data-page="historico">Histórico</button><button data-page="relatorios">Relatórios mensais</button><button data-page="notas">Notas fiscais</button><button data-page="clientes">Clientes</button><button data-page="servicos">Serviços</button><button data-page="almoxarifado">Almoxarifado</button><button data-page="estoque">Estoque de materiais</button><button data-page="empresa">Minha empresa</button><button data-page="backup">Backup</button>
+<button class="primary" data-page="orcamento">Novo orçamento</button><button data-page="historico">Histórico</button><button data-page="relatorios">Relatórios mensais</button><button data-page="despesas">Despesas</button><button data-page="notas">Notas fiscais</button><button data-page="clientes">Clientes</button><button data-page="servicos">Serviços</button><button data-page="almoxarifado">Almoxarifado</button><button data-page="estoque">Estoque de materiais</button><button data-page="empresa">Minha empresa</button><button data-page="backup">Backup</button>
 </nav>
 
 <section id="orcamento" class="page active">
@@ -206,6 +211,47 @@ button.primary{background:linear-gradient(135deg,var(--flow-blue),#0859b0)}butto
 </div><div class="actions" style="margin-top:12px"><button class="primary" onclick="saveMaterial()">Salvar material</button><button onclick="clearMaterial()">Limpar</button></div></div>
 <div class="inventorySummary"><div class="stat blue"><small>Itens cadastrados</small><strong id="matTypes">0</strong></div><div class="stat green"><small>Valor estimado do estoque</small><strong id="matValue">R$ 0,00</strong></div><div class="stat red"><small>Estoque baixo</small><strong id="matLow">0</strong></div></div>
 <div class="card"><div class="actions" style="justify-content:space-between"><h2>Materiais em estoque</h2><input id="matSearch" style="max-width:300px" placeholder="Pesquisar material..." oninput="renderMaterials()"></div><div class="tablebox"><table><thead><tr><th>Material</th><th>Categoria</th><th>Quantidade</th><th>Mínimo</th><th>Custo/un.</th><th>Valor</th><th>Fornecedor/local</th><th>Ações</th></tr></thead><tbody id="matList"></tbody></table></div></div>
+</section>
+
+
+<section id="despesas" class="page">
+<div class="card">
+<h2>Cadastro de despesas da empresa</h2>
+<input type="hidden" id="expId">
+<div class="grid">
+<div><label>Data da despesa</label><input id="expDate" type="date"></div>
+<div class="span2"><label>Descrição</label><input id="expDesc" placeholder="Ex.: Compra de lona 440 g"></div>
+<div><label>Categoria</label><select id="expCategory"><option>Materiais e insumos</option><option>Impressão terceirizada</option><option>Instalação / freelancer</option><option>Transporte / combustível</option><option>Aluguel</option><option>Energia / água / internet</option><option>Manutenção de equipamentos</option><option>Ferramentas e equipamentos</option><option>Impostos e taxas</option><option>Marketing e publicidade</option><option>Contabilidade</option><option>Outras despesas</option></select></div>
+<div><label>Valor (R$)</label><input id="expValue" type="number" min="0" step=".01" placeholder="0,00"></div>
+<div><label>Situação</label><select id="expStatus"><option>Pago</option><option>Pendente</option></select></div>
+<div><label>Forma de pagamento</label><select id="expPayment"><option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Boleto</option><option>Transferência</option><option>Outro</option></select></div>
+<div><label>Fornecedor / favorecido</label><input id="expSupplier" placeholder="Empresa ou profissional"></div>
+<div><label>Documento</label><input id="expDocument" placeholder="NF, recibo ou referência"></div>
+<div class="span2"><label>Observações</label><input id="expObs" placeholder="Informações adicionais"></div>
+<div><label class="checkLabel"><input id="expRecurring" type="checkbox"> Despesa recorrente</label></div>
+</div>
+<div class="actions" style="margin-top:14px"><button class="primary" onclick="saveExpense()">Salvar despesa</button><button onclick="clearExpense()">Limpar</button></div>
+</div>
+
+<div class="card">
+<div class="expenseFilters">
+<div><label>Mês de referência</label><input id="expMonth" type="month" onchange="renderExpenses()"></div>
+<div><label>Situação</label><select id="expFilterStatus" onchange="renderExpenses()"><option value="">Todas</option><option>Pago</option><option>Pendente</option></select></div>
+<div><label>Pesquisar</label><input id="expSearch" placeholder="Descrição, categoria ou fornecedor..." oninput="renderExpenses()"></div>
+</div>
+</div>
+
+<div class="expenseSummary">
+<div class="stat expenseStat total"><span class="expenseIcon">R$</span><small>Total do mês</small><strong id="expTotal">R$ 0,00</strong></div>
+<div class="stat expenseStat paid"><span class="expenseIcon">✓</span><small>Despesas pagas</small><strong id="expPaid">R$ 0,00</strong></div>
+<div class="stat expenseStat pending"><span class="expenseIcon">!</span><small>A pagar</small><strong id="expPending">R$ 0,00</strong></div>
+<div class="stat expenseStat count"><span class="expenseIcon">#</span><small>Lançamentos</small><strong id="expCount">0</strong></div>
+</div>
+
+<div class="card">
+<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap"><div><h2 style="margin-bottom:3px">Despesas cadastradas</h2><div class="muted">Os lançamentos são sincronizados junto com os demais dados do sistema.</div></div><button onclick="printExpenses()">Imprimir relatório</button></div>
+<div class="tablebox" style="margin-top:12px"><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Fornecedor</th><th>Situação</th><th>Pagamento</th><th class="num">Valor</th><th>Ações</th></tr></thead><tbody id="expenseList"></tbody></table></div>
+</div>
 </section>
 
 <section id="empresa" class="page"><div class="card"><h2>Dados da empresa</h2><div class="grid"><div class="span2"><label>Nome da empresa</label><input id="empNome"></div><div><label>CNPJ</label><input id="empCnpj"></div><div><label>Inscrição Estadual</label><input id="empIe"></div><div class="span2"><label>Endereço</label><input id="empEnd"></div><div><label>Telefone</label><input id="empTel"></div><div><label>E-mail</label><input id="empEmail"></div><div><label>Pagamento padrão</label><input id="empPag" value="50% de entrada e 50% na entrega"></div><div><label>Entrega padrão</label><input id="empEnt" value="7 dias úteis após aprovação"></div><div><label>Validade padrão</label><input id="empVal" value="15 dias"></div><div><label>Chave Pix</label><input id="empPix"></div><div class="span2"><label>Logotipo</label><input id="empLogoFile" type="file" accept="image/*" onchange="loadLogo(event)"><img id="logoPreview" class="logoPreview"></div></div><div class="actions" style="margin-top:12px"><button class="primary" onclick="saveCompany()">Salvar dados da empresa</button><button class="danger" onclick="removeLogo()">Remover logotipo</button></div></div></section>
@@ -380,7 +426,49 @@ function sendWhatsApp(){var cid=document.getElementById('cliente').value,c=db.cl
 function exportBackup(){var b=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-flow-orcamentos-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
 function importBackup(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!d.clients||!d.services||!d.quotes)throw 0;if(confirm('Restaurar este backup e substituir os dados atuais?')){db=d;persist();init();alert('Backup restaurado.')}}catch(x){alert('Arquivo de backup inválido.')}};r.readAsText(f)}
 
-function ensureInventory(){if(!Array.isArray(db.tools))db.tools=[];if(!Array.isArray(db.materials))db.materials=[]}
+
+function ensureExpenses(){if(!Array.isArray(db.expenses))db.expenses=[]}
+function clearExpense(){
+ ['expId','expDesc','expValue','expSupplier','expDocument','expObs'].forEach(function(id){document.getElementById(id).value=''});
+ document.getElementById('expDate').value=new Date().toISOString().slice(0,10);
+ document.getElementById('expCategory').value='Materiais e insumos';
+ document.getElementById('expStatus').value='Pago';
+ document.getElementById('expPayment').value='Pix';
+ document.getElementById('expRecurring').checked=false;
+}
+function saveExpense(){
+ ensureExpenses();
+ var desc=document.getElementById('expDesc').value.trim(),value=Number(document.getElementById('expValue').value)||0,date=document.getElementById('expDate').value;
+ if(!date){alert('Informe a data da despesa.');return}
+ if(!desc){alert('Informe a descrição da despesa.');return}
+ if(value<=0){alert('Informe um valor maior que zero.');return}
+ var e={id:document.getElementById('expId').value||uid(),date:date,desc:desc,category:document.getElementById('expCategory').value,value:value,status:document.getElementById('expStatus').value,payment:document.getElementById('expPayment').value,supplier:document.getElementById('expSupplier').value,document:document.getElementById('expDocument').value,obs:document.getElementById('expObs').value,recurring:document.getElementById('expRecurring').checked,createdAt:new Date().toISOString()};
+ var i=db.expenses.findIndex(function(x){return x.id===e.id});
+ if(i>=0){e.createdAt=db.expenses[i].createdAt||e.createdAt;db.expenses[i]=e}else db.expenses.push(e);
+ persist();clearExpense();renderExpenses();alert('Despesa salva com sucesso.');
+}
+function editExpense(id){
+ ensureExpenses();var e=db.expenses.find(function(x){return x.id===id});if(!e)return;
+ document.getElementById('expId').value=e.id;document.getElementById('expDate').value=e.date||'';document.getElementById('expDesc').value=e.desc||'';document.getElementById('expCategory').value=e.category||'Outras despesas';document.getElementById('expValue').value=e.value||0;document.getElementById('expStatus').value=e.status||'Pendente';document.getElementById('expPayment').value=e.payment||'Outro';document.getElementById('expSupplier').value=e.supplier||'';document.getElementById('expDocument').value=e.document||'';document.getElementById('expObs').value=e.obs||'';document.getElementById('expRecurring').checked=!!e.recurring;
+ document.getElementById('despesas').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function deleteExpense(id){if(confirm('Excluir esta despesa?')){db.expenses=db.expenses.filter(function(x){return x.id!==id});persist();renderExpenses()}}
+function toggleExpense(id){var e=db.expenses.find(function(x){return x.id===id});if(!e)return;e.status=e.status==='Pago'?'Pendente':'Pago';persist();renderExpenses()}
+function expenseDate(v){if(!v)return '—';var p=v.split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:v}
+function renderExpenses(){
+ ensureExpenses();var month=document.getElementById('expMonth').value||new Date().toISOString().slice(0,7),status=document.getElementById('expFilterStatus').value,search=document.getElementById('expSearch').value.toLowerCase();
+ var monthList=db.expenses.filter(function(e){return String(e.date||'').slice(0,7)===month}),list=monthList.filter(function(e){return (!status||e.status===status)&&[e.desc,e.category,e.supplier,e.document,e.obs].join(' ').toLowerCase().includes(search)}).sort(function(a,b){return String(b.date).localeCompare(String(a.date))});
+ var total=monthList.reduce(function(a,e){return a+Number(e.value||0)},0),paid=monthList.filter(function(e){return e.status==='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0),pending=monthList.filter(function(e){return e.status!=='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0);
+ document.getElementById('expTotal').textContent=money(total);document.getElementById('expPaid').textContent=money(paid);document.getElementById('expPending').textContent=money(pending);document.getElementById('expCount').textContent=monthList.length;
+ document.getElementById('expenseList').innerHTML=list.length?list.map(function(e){return '<tr class="'+(e.status==='Pago'?'':'expenseRowPending')+'"><td>'+expenseDate(e.date)+'</td><td><strong>'+esc(e.desc)+'</strong>'+(e.recurring?'<div class="muted">Recorrente</div>':'')+(e.obs?'<div class="muted">'+esc(e.obs)+'</div>':'')+'</td><td>'+esc(e.category||'—')+'</td><td>'+esc(e.supplier||'—')+(e.document?'<div class="muted">'+esc(e.document)+'</div>':'')+'</td><td><span class="expenseStatus '+(e.status==='Pago'?'pago':'pendente')+'">'+esc(e.status||'Pendente')+'</span></td><td>'+esc(e.payment||'—')+'</td><td class="num expenseValue">'+money(e.value)+'</td><td><div class="expenseActions"><button onclick="toggleExpense(\''+e.id+'\')">'+(e.status==='Pago'?'Marcar pendente':'Marcar pago')+'</button><button onclick="editExpense(\''+e.id+'\')">Editar</button><button class="danger" onclick="deleteExpense(\''+e.id+'\')">Excluir</button></div></td></tr>'}).join(''):'<tr><td colspan="8" class="empty">Nenhuma despesa encontrada neste período.</td></tr>';
+}
+function printExpenses(){
+ var month=document.getElementById('expMonth').value||new Date().toISOString().slice(0,7),list=db.expenses.filter(function(e){return String(e.date||'').slice(0,7)===month}).sort(function(a,b){return String(a.date).localeCompare(String(b.date))}),total=list.reduce(function(a,e){return a+Number(e.value||0)},0),paid=list.filter(function(e){return e.status==='Pago'}).reduce(function(a,e){return a+Number(e.value||0)},0),pending=total-paid,w=window.open('','_blank');
+ var rows=list.map(function(e){return '<tr><td>'+expenseDate(e.date)+'</td><td>'+esc(e.desc)+'</td><td>'+esc(e.category||'')+'</td><td>'+esc(e.status||'')+'</td><td style="text-align:right">'+money(e.value)+'</td></tr>'}).join('');
+ w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Relatório de despesas</title><style>body{font:13px Arial;padding:30px;color:#172033}h1{margin:0}small{color:#667085}table{width:100%;border-collapse:collapse;margin-top:22px}th,td{border-bottom:1px solid #ddd;padding:8px;text-align:left}th{background:#eef4fa}.summary{display:flex;gap:24px;margin-top:18px;font-size:15px}.summary strong{display:block;font-size:20px}@media print{button{display:none}}</style></head><body><h1>'+esc(db.company.nome||'Flow Comunicação Visual')+'</h1><small>Relatório de despesas — '+month.split('-').reverse().join('/')+'</small><div class="summary"><div>Total<strong>'+money(total)+'</strong></div><div>Pago<strong>'+money(paid)+'</strong></div><div>A pagar<strong>'+money(pending)+'</strong></div></div><table><thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Situação</th><th style="text-align:right">Valor</th></tr></thead><tbody>'+rows+'</tbody></table><button onclick="window.print()">Imprimir</button></body></html>');w.document.close();
+}
+
+function ensureInventory(){if(!Array.isArray(db.tools))db.tools=[];if(!Array.isArray(db.materials))db.materials=[];ensureExpenses()}
 function clearTool(){['toolId','toolNome','toolCategoria','toolCodigo','toolLocal','toolResponsavel','toolObs'].forEach(function(id){document.getElementById(id).value=''});document.getElementById('toolQtd').value=1;document.getElementById('toolEstado').value='Disponível'}
 function saveTool(){ensureInventory();var nome=document.getElementById('toolNome').value.trim();if(!nome){alert('Informe o nome da ferramenta.');return}var t={id:document.getElementById('toolId').value||uid(),nome:nome,categoria:document.getElementById('toolCategoria').value,codigo:document.getElementById('toolCodigo').value,qtd:Math.max(0,Number(document.getElementById('toolQtd').value)||0),estado:document.getElementById('toolEstado').value,local:document.getElementById('toolLocal').value,responsavel:document.getElementById('toolResponsavel').value,obs:document.getElementById('toolObs').value};var i=db.tools.findIndex(function(x){return x.id===t.id});if(i>=0)db.tools[i]=t;else db.tools.push(t);persist();clearTool();renderTools();alert('Ferramenta salva com sucesso.')}
 function editTool(id){ensureInventory();var t=db.tools.find(function(x){return x.id===id});if(!t)return;document.getElementById('toolId').value=t.id;document.getElementById('toolNome').value=t.nome||'';document.getElementById('toolCategoria').value=t.categoria||'';document.getElementById('toolCodigo').value=t.codigo||'';document.getElementById('toolQtd').value=t.qtd||0;document.getElementById('toolEstado').value=t.estado||'Disponível';document.getElementById('toolLocal').value=t.local||'';document.getElementById('toolResponsavel').value=t.responsavel||'';document.getElementById('toolObs').value=t.obs||'';scrollTo(0,0)}
@@ -393,8 +481,8 @@ function deleteMaterial(id){if(confirm('Excluir este material do estoque?')){db.
 function moveStock(id,type){ensureInventory();var m=db.materials.find(function(x){return x.id===id});if(!m)return;var raw=prompt((type==='entrada'?'Quantidade de entrada':'Quantidade de saída')+' em '+(m.un||'un')+':');if(raw===null)return;var q=num(raw);if(q<=0){alert('Informe uma quantidade maior que zero.');return}if(type==='saida'&&q>Number(m.qtd||0)){alert('A saída é maior que o estoque disponível.');return}m.qtd=Number(m.qtd||0)+(type==='entrada'?q:-q);m.movements=m.movements||[];m.movements.unshift({id:uid(),type:type,qtd:q,date:new Date().toISOString(),user:usuarioAtualId});persist();renderMaterials();alert(type==='entrada'?'Entrada registrada.':'Saída registrada.')}
 function renderMaterials(){ensureInventory();var search=(document.getElementById('matSearch')?document.getElementById('matSearch').value:'').toLowerCase(),list=db.materials.filter(function(m){return [m.nome,m.categoria,m.fornecedor,m.local,m.obs].join(' ').toLowerCase().includes(search)}),low=db.materials.filter(function(m){return Number(m.min||0)>0&&Number(m.qtd||0)<=Number(m.min||0)});document.getElementById('matTypes').textContent=db.materials.length;document.getElementById('matValue').textContent=money(db.materials.reduce(function(a,m){return a+Number(m.qtd||0)*Number(m.custo||0)},0));document.getElementById('matLow').textContent=low.length;document.getElementById('matList').innerHTML=list.length?list.map(function(m){var isLow=Number(m.min||0)>0&&Number(m.qtd||0)<=Number(m.min||0),valor=Number(m.qtd||0)*Number(m.custo||0);return '<tr class="'+(isLow?'lowStock':'')+'"><td><strong>'+esc(m.nome)+'</strong><div class="muted">'+esc(m.obs||'')+'</div></td><td>'+esc(m.categoria||'—')+'</td><td><span class="'+(isLow?'stockLow':'stockOk')+'">'+Number(m.qtd||0).toLocaleString('pt-BR')+' '+esc(m.un||'un')+'</span></td><td>'+Number(m.min||0).toLocaleString('pt-BR')+' '+esc(m.un||'un')+'</td><td>'+money(m.custo)+'</td><td>'+money(valor)+'</td><td>'+esc(m.fornecedor||'—')+'<div class="muted">'+esc(m.local||'')+'</div></td><td><button class="success" onclick="moveStock(\''+m.id+'\',\'entrada\')">+ Entrada</button> <button onclick="moveStock(\''+m.id+'\',\'saida\')">− Saída</button> <button onclick="editMaterial(\''+m.id+'\')">Editar</button> <button class="danger" onclick="deleteMaterial(\''+m.id+'\')">Excluir</button></td></tr>'}).join(''):'<tr><td colspan="8" class="empty">Nenhum material cadastrado.</td></tr>'}
 
-function renderAll(){ensureInventory();renderClients();renderServices();renderQuotes();renderReports();renderNotas();renderTools();renderMaterials();loadCompany()}
-function init(){document.getElementById('reportMonth').value=new Date().toISOString().slice(0,7);renderAll();newQuote()}
+function renderAll(){ensureInventory();renderClients();renderServices();renderQuotes();renderReports();renderNotas();renderTools();renderMaterials();renderExpenses();loadCompany()}
+function init(){var currentMonth=new Date().toISOString().slice(0,7);document.getElementById('reportMonth').value=currentMonth;document.getElementById('expMonth').value=currentMonth;clearExpense();renderAll();newQuote()}
 function mostrarErroLogin(msg){var e=document.getElementById('loginError');e.textContent=msg;e.style.display='block'}
 async function liberarSistema(user){
   var res=await supabaseClient.from('funcionarios').select('nome,email,perfil,ativo').eq('id',user.id).single();
